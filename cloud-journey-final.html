@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cloud Security Journey — A Seller's Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg-dark: #0a0e1a;
+    --bg-card: #131929;
+    --accent-blue: #307FE2;
+    --accent-cyan: #3CB17E;
+    --accent-orange: #FFB900;
+    --accent-red: #DA291C;
+    --accent-purple: #9063CD;
+    --accent-teal: #2CCCD3;
+    --accent-silver: #A2B2C8;
+    --accent-grey: #75787B;
+    --text-primary: #e8ecf4;
+    --text-secondary: #A2B2C8;
+    --text-dim: #75787B;
+    --border: rgba(255,255,255,0.08);
+    --glow-blue: rgba(48, 127, 226, 0.15);
+    --glow-cyan: rgba(60, 177, 126, 0.15);
+    --glow-orange: rgba(255, 185, 0, 0.15);
+    --glow-red: rgba(218, 41, 28, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 54px; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+    background: rgba(10, 14, 26, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .topbar-title { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #f0f4f8; }
+  .topbar-subtitle { font-size: 11px; color: var(--text-dim); letter-spacing: 0.3px; margin-top: 1px; }
+
+  .timeline { display: flex; align-items: center; gap: 6px; }
+  .timeline-dot {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.12); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--text-dim);
+    cursor: pointer; transition: all 0.3s;
+  }
+  .timeline-dot:hover:not(.active) { border-color: rgba(255,255,255,0.25); color: var(--text-secondary); }
+  .timeline-dot.active { border-color: var(--accent-blue); color: var(--accent-blue); }
+  .timeline-dot.act2.active { border-color: var(--accent-orange); color: var(--accent-orange); }
+  .timeline-dot.act3.active { border-color: var(--accent-red); color: var(--accent-red); }
+  .timeline-dot.act4.active { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+  .timeline-line { width: 32px; height: 2px; background: rgba(255,255,255,0.12); }
+  .timeline-line.filled { background: var(--accent-blue); }
+
+  .main { padding-top: 54px; height: 100vh; display: flex; flex-direction: column; overflow-y: auto; }
+
+  .act-header { text-align: center; padding: 20px 32px 6px; flex-shrink: 0; }
+  .act-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; color: var(--accent-blue); }
+  .act-label.act2 { color: var(--accent-orange); }
+  .act-label.act3 { color: var(--accent-red); }
+  .act-label.act4 { color: var(--accent-cyan); }
+  .act-title {
+    font-size: clamp(26px, 4vw, 40px); font-weight: 800; line-height: 1.15; margin-bottom: 10px;
+    background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .act-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 660px; margin: 0 auto; line-height: 1.6; }
+  .seller-tip {
+    display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 10px 16px;
+    max-width: 700px; margin-left: auto; margin-right: auto;
+    background: rgba(144,99,205,0.07); border: 1px solid rgba(144,99,205,0.15);
+    border-radius: 8px; font-size: 12px; line-height: 1.6; color: var(--accent-purple); text-align: left;
+  }
+
+  .diagram-area { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 10px 32px 6px; position: relative; }
+  .diagram-container { position: relative; width: 100%; max-width: 960px; height: 100%; max-height: 520px; min-height: 300px; }
+
+  /* Zones */
+  .zone { position: absolute; border-radius: 14px; transition: all 0.45s; }
+  .zone-label {
+    position: absolute; top: -10px; left: 16px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    padding: 2px 10px; border-radius: 4px; background: var(--bg-dark);
+  }
+  .zone-onprem { border: 1px solid rgba(48, 127, 226, 0.20); }
+  .zone-onprem .zone-label { color: #307FE2; }
+  .zone-cloud { border: 1px solid rgba(144, 99, 205, 0.20); }
+  .zone-cloud .zone-label { color: #9063CD; }
+
+  /* CSPM wrapper — wraps AROUND the cloud zone in Act 4 */
+  .zone-cspm-wrapper {
+    border: 1px solid rgba(60, 177, 126, 0.20);
+    box-shadow: 0 0 30px rgba(60, 177, 126, 0.05);
+  }
+  .zone-cspm-wrapper .zone-label {
+    color: #3CB17E;
+  }
+
+  /* Nodes */
+  .node { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all 0.3s ease; position: absolute; }
+  .node:hover { transform: translateY(-3px); }
+  .node-icon {
+    width: 50px; height: 50px; border-radius: 12px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 23px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.03); transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .node:hover .node-icon { border-color: rgba(255,255,255,0.22); }
+  .node-label { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; white-space: nowrap; }
+
+  .node.warn .node-icon { border-color: rgba(255, 185, 0, 0.25); }
+  .node.warn:hover .node-icon { border-color: rgba(255,255,255,0.22); }
+  .node.danger .node-icon { border-color: rgba(218, 41, 28, 0.25); }
+  .node.danger:hover .node-icon { border-color: rgba(255,255,255,0.22); }
+  .node.safe .node-icon { border-color: rgba(60, 177, 126, 0.25); }
+
+  /* Sequence number badge */
+  .seq-num {
+    position: absolute; top: -8px; left: -8px; z-index: 3;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800; color: #fff;
+    background: var(--accent-blue); border: 2px solid var(--bg-dark);
+    transition: all 0.4s ease;
+  }
+  .node.warn .seq-num { background: var(--accent-orange); }
+  .node.danger .seq-num { background: var(--accent-red); }
+  .node.safe .seq-num { background: var(--accent-cyan); }
+
+  /* Visited state — number greys out after being clicked */
+  .node.visited .seq-num {
+    background: var(--text-dim) !important;
+    color: rgba(255,255,255,0.5);
+  }
+  .node.visited .node-icon {
+    animation: none !important; /* stop pulsing once visited */
+  }
+
+  .seq-optional {
+    position: absolute; top: -6px; left: -6px; z-index: 3;
+    font-size: 8px; font-weight: 700; color: var(--text-dim);
+    letter-spacing: 0.5px;
+  }
+
+  .connections-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+  /* Hotspot animations */
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(48,127,226,0.4); } 50% { box-shadow: 0 0 0 8px rgba(48,127,226,0); } }
+  .node.hotspot .node-icon { animation: pulse 2.5s ease-in-out infinite; }
+  @keyframes pulseWarn { 0%,100% { box-shadow: 0 0 0 0 rgba(255,185,0,0.4); } 50% { box-shadow: 0 0 0 8px rgba(255,185,0,0); } }
+  .node.warn.hotspot .node-icon { animation: pulseWarn 2s ease-in-out infinite; }
+  @keyframes pulseDanger { 0%,100% { box-shadow: 0 0 0 0 rgba(218,41,28,0.4); } 50% { box-shadow: 0 0 0 8px rgba(218,41,28,0); } }
+  .node.danger.hotspot .node-icon { animation: pulseDanger 2s ease-in-out infinite; }
+  @keyframes pulseCyan { 0%,100% { box-shadow: 0 0 0 0 rgba(60,177,126,0.4); } 50% { box-shadow: 0 0 0 8px rgba(60,177,126,0); } }
+  .node.safe.hotspot .node-icon { animation: pulseCyan 2.5s ease-in-out infinite; }
+
+  /* Info panel */
+  .info-panel {
+    position: fixed; top: 54px; right: 0; bottom: 0; width: 400px;
+    background: #0f1424; border-left: 1px solid rgba(255,255,255,0.12);
+    transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 90; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+  }
+  .info-panel::-webkit-scrollbar { width: 5px; }
+  .info-panel::-webkit-scrollbar-track { background: transparent; }
+  .info-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+  .info-panel-scroll { padding: 32px 24px; overflow: visible; }
+  .info-panel.open { transform: translateX(0); }
+  .info-panel-close {
+    position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: var(--text-dim);
+    font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; z-index: 2;
+  }
+  .info-panel-close:hover { border-color: rgba(255,255,255,0.3); color: var(--text-primary); background: rgba(255,255,255,0.08); }
+  .info-panel h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .info-panel .info-tag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+  .info-tag.familiar { background: rgba(48,127,226,0.10); color: var(--accent-blue); }
+  .info-tag.blind { background: rgba(255,185,0,0.10); color: var(--accent-orange); }
+  .info-tag.risk { background: rgba(218,41,28,0.10); color: var(--accent-red); }
+  .info-tag.solution { background: rgba(60,177,126,0.10); color: var(--accent-cyan); }
+  .info-panel p { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 14px; }
+  .info-panel .callout { padding: 14px 16px; border-radius: 10px; border-left: 3px solid var(--accent-purple); background: rgba(144,99,205,0.06); font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin-top: 16px; overflow: visible; }
+  .info-panel .callout strong { color: var(--accent-purple); }
+
+  /* Badges */
+  .badge { position: absolute; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; transition: all 0.5s ease; z-index: 2; }
+  .badge-ok { background: rgba(60,177,126,0.06); color: var(--accent-cyan); border: 1px solid rgba(60,177,126,0.25); }
+  .badge-warn { background: rgba(255,185,0,0.08); color: var(--accent-orange); border: 1px dashed rgba(255,185,0,0.4); }
+  .badge-danger { background: rgba(218,41,28,0.06); color: var(--accent-red); border: 1px solid rgba(218,41,28,0.25); }
+
+  .narration { padding: 8px 32px 18px; text-align: center; flex-shrink: 0; }
+  .narration-text { font-size: 13px; color: var(--text-dim); line-height: 1.6; max-width: 680px; margin: 0 auto 12px; font-style: italic; }
+  .nav-buttons { display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .nav-btn { padding: 10px 26px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: var(--text-secondary); }
+  .nav-btn:hover:not(:disabled) { border-color: rgba(255,255,255,0.3); color: #f0f4f8; }
+  .nav-btn.primary { border: none; color: #fff; }
+  .nav-btn.primary:hover:not(:disabled) { filter: brightness(1.1); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+
+  .intro-overlay { position: fixed; inset: 0; z-index: 200; background: var(--bg-dark); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px; transition: opacity 0.8s ease, visibility 0.8s ease; }
+  .intro-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .intro-glow { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(48,127,226,0.10) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -55%); pointer-events: none; }
+  .intro-card { position: relative; max-width: 520px; width: 90%; padding: 44px 40px 36px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); border-radius: 20px; text-align: center; box-shadow: 0 0 80px rgba(48,127,226,0.08), 0 0 160px rgba(60,177,126,0.04); animation: cardFadeIn 0.6s ease-out; }
+  @keyframes cardFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .intro-icon { font-size: 44px; margin-bottom: 16px; }
+  .intro-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 16px; }
+  .intro-title { font-size: clamp(28px,4.5vw,44px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.03em; background: linear-gradient(135deg,#f1f5f9,var(--text-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .intro-desc { font-size: 15px; color: var(--text-secondary); max-width: 460px; line-height: 1.65; margin: 0 auto 32px; }
+  .intro-start { display: inline-block; padding: 13px 34px; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 700; background: linear-gradient(135deg, #307FE2, #2466B8); border: none; color: #fff; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; margin-bottom: 18px; }
+  .intro-start:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(48,127,226,0.35); }
+  .intro-how { margin-top: 28px; display: flex; gap: 20px; justify-content: center; padding: 16px 20px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); }
+  .intro-how-step { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .intro-how-step .step-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(48,127,226,0.06); border: 1px solid rgba(48,127,226,0.12); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .intro-how-step .step-text { font-size: 11px; color: var(--text-dim); font-weight: 500; }
+  .intro-meta { margin-top: 20px; font-size: 12px; color: #374151; }
+
+  /* Glossary tooltips — dotted underline, hover to reveal definition */
+  .g { position: relative; border-bottom: 2px dotted rgba(48,127,226,0.55); cursor: help; color: inherit; }
+  .g:hover { border-bottom-color: var(--accent-blue); }
+  .g .g-tip { visibility: hidden; opacity: 0; position: absolute; bottom: calc(100% + 8px); left: 0; width: 240px; padding: 11px 13px; background: #161b2e; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; font-size: 12px; font-weight: 400; line-height: 1.55; color: var(--text-secondary); text-align: left; z-index: 200; pointer-events: none; transition: opacity 0.2s ease; box-shadow: 0 8px 30px rgba(0,0,0,0.5); white-space: normal; }
+  .g .g-tip::after { content: ''; position: absolute; top: 100%; left: 20px; border: 6px solid transparent; border-top-color: rgba(255,255,255,0.12); }
+  .g:hover .g-tip { visibility: visible; opacity: 1; }
+  .g .g-term { display: block; font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 3px; }
+  .info-panel .g .g-tip { width: 220px; left: auto; right: 0; }
+  .info-panel .g .g-tip::after { left: auto; right: 20px; }
+  /* Tooltip below the term instead of above */
+  .g.g-below .g-tip { bottom: auto; top: calc(100% + 8px); }
+  .g.g-below .g-tip::after { top: auto; bottom: 100%; border-top-color: transparent; border-bottom-color: rgba(255,255,255,0.12); }
+  .g.g-right .g-tip { left: 0; right: auto; }
+  .g.g-right .g-tip::after { left: 20px; right: auto; }
+
+  .hidden-el { opacity: 0; pointer-events: none; transform: scale(0.85); }
+  .visible-el { opacity: 1; pointer-events: all; transform: scale(1); }
+  .node, .zone, .badge { transition: all 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .dimmed { opacity: 0.2 !important; }
+
+  .coverage-boundary { position: absolute; border: 1px solid rgba(60,177,126,0.25); border-radius: 10px; background: rgba(60,177,126,0.03); transition: all 0.45s; pointer-events: none; }
+  .coverage-boundary-label { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #3CB17E; white-space: nowrap; background: var(--bg-dark); padding: 2px 8px; border-radius: 4px; }
+
+  @media (max-width: 768px) {
+    .diagram-container { transform: scale(0.65); transform-origin: top center; }
+    .info-panel { width: 100%; right: -100%; }
+    .topbar { padding: 10px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-glow"></div>
+  <div class="intro-card">
+    <div class="intro-icon">🛡️</div>
+    <div class="intro-eyebrow">Interactive Walkthrough</div>
+    <div class="intro-title">The Cloud Security<br>Journey</div>
+    <div class="intro-desc">Your customers moved to the cloud. They secured the network. But the cloud is bigger than the network — and they don't know what they don't know yet.</div>
+    <button class="intro-start" onclick="startJourney()">Begin the Journey</button>
+    <div class="intro-how">
+      <div class="intro-how-step"><div class="step-icon">👆</div><div class="step-text">Click hotspots</div></div>
+      <div class="intro-how-step"><div class="step-icon">📖</div><div class="step-text">Read insights</div></div>
+      <div class="intro-how-step"><div class="step-icon">→</div><div class="step-text">Advance acts</div></div>
+    </div>
+    <div class="intro-meta">~5 min · 4 acts · Arrow keys to navigate</div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-title">The Cloud Security Journey</div>
+    <div class="topbar-subtitle">Seller enablement — understanding the customer's path to cloud maturity</div>
+  </div>
+  <div class="timeline">
+    <div class="timeline-dot active" data-act="1" onclick="goToAct(1)">1</div>
+    <div class="timeline-line" id="tl1"></div>
+    <div class="timeline-dot act2" data-act="2" onclick="goToAct(2)">2</div>
+    <div class="timeline-line" id="tl2"></div>
+    <div class="timeline-dot act3" data-act="3" onclick="goToAct(3)">3</div>
+    <div class="timeline-line" id="tl3"></div>
+    <div class="timeline-dot act4" data-act="4" onclick="goToAct(4)">4</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="act-header">
+    <div class="act-label" id="actLabel">Act 1 of 4</div>
+    <div class="act-title" id="actTitle">The Familiar</div>
+    <div class="act-subtitle" id="actSubtitle"></div>
+    <div class="seller-tip">💡 <span id="sellerTipText"></span></div>
+  </div>
+
+  <div class="diagram-area">
+    <div class="diagram-container" id="diagramContainer">
+      <svg class="connections-svg" id="connSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+
+      <!-- ═══════════════════════════════════════════
+           GEOMETRY (compact layout)
+           On-Prem:       20,40   240×180  → 260,220
+           Gap:           260–420
+           Cloud:         420,40  520×180  → 940,220   (expands to h:310 → bottom 350)
+           CSPM wrapper:  400,18  560×490  → 960,508   (Act 4, label sits above border)
+           Act 3 nodes:   top:375
+           Act 4 nodes:   top:400
+           ═══════════════════════════════════════════ -->
+
+      <!-- CSPM WRAPPER — sits BEHIND cloud zone, wraps around it in Act 4 -->
+      <div class="zone zone-cspm-wrapper hidden-el" id="zoneCspmWrapper" style="left:400px; top:18px; width:560px; height:490px; z-index:0;">
+        <div class="zone-label">Cloud Security Posture Management</div>
+      </div>
+
+      <!-- ON-PREM ZONE -->
+      <div class="zone zone-onprem" id="zoneOnprem" style="left:20px; top:40px; width:240px; height:180px;">
+        <div class="zone-label">On-Premises</div>
+      </div>
+
+      <!-- ① Data Center -->
+      <div class="node hotspot" id="nodeDatacenter" data-info="datacenter" style="left:55px; top:95px;" onclick="showInfo('datacenter',this)">
+        <div class="node-icon"><span class="seq-num">1</span>🏢</div>
+        <div class="node-label">Data Center</div>
+      </div>
+      <!-- ② NGFW -->
+      <div class="node hotspot" id="nodeOnpremFw" data-info="onpremfw" style="left:160px; top:95px;" onclick="showInfo('onpremfw',this)">
+        <div class="node-icon"><span class="seq-num">2</span>🛡️</div>
+        <div class="node-label">NGFW</div>
+      </div>
+
+      <!-- VPN label -->
+      <div id="vpnLabel" style="position:absolute; left:285px; top:85px; font-size:10px; font-weight:600; color:var(--accent-blue); letter-spacing:1px; text-transform:uppercase; z-index:2; text-align:center; width:100px;">
+        Encrypted<br>Tunnel
+      </div>
+
+      <!-- CLOUD ZONE -->
+      <div class="zone zone-cloud" id="zoneCloud" style="left:420px; top:40px; width:520px; height:210px;">
+        <div class="zone-label" style="left:50%; transform:translateX(-50%);">Public Cloud</div>
+      </div>
+
+      <!-- Coverage boundary -->
+      <div class="coverage-boundary" id="coverageBoundary" style="left:430px; top:55px; width:270px; height:175px;">
+        <div class="coverage-boundary-label" id="coverageBoundaryLabel">✓ NGFW Coverage Area</div>
+      </div>
+
+      <!-- ③ Cloud NGFW -->
+      <div class="node hotspot" id="nodeCloudFw" style="left:450px; top:95px;" onclick="showInfo('cloudfw',this)">
+        <div class="node-icon"><span class="seq-num">3</span>🔥</div>
+        <div class="node-label">Cloud NGFW</div>
+      </div>
+      <!-- VMs (optional) -->
+      <div class="node hotspot" id="nodeVm" style="left:565px; top:68px;" onclick="showInfo('vm',this)">
+        <div class="node-icon"><span class="seq-optional">opt</span>🖥️</div>
+        <div class="node-label">VMs / Workloads</div>
+      </div>
+      <!-- Database (optional) -->
+      <div class="node hotspot" id="nodeDb" style="left:565px; top:155px;" onclick="showInfo('db',this)">
+        <div class="node-icon"><span class="seq-optional">opt</span>💾</div>
+        <div class="node-label">Database</div>
+      </div>
+
+      <!-- badgeFwOk removed — merged into coverage boundary label -->
+
+      <!-- ═══ ACT 2 ═══ -->
+      <div class="node warn hotspot hidden-el" id="nodeIam" style="left:740px; top:68px;" onclick="showInfo('iam',this)">
+        <div class="node-icon"><span class="seq-num">4</span>🔑</div>
+        <div class="node-label">IAM / Identities</div>
+      </div>
+      <div class="node warn hotspot hidden-el" id="nodeBucket" style="left:740px; top:165px;" onclick="showInfo('bucket',this)">
+        <div class="node-icon"><span class="seq-num">5</span>📦</div>
+        <div class="node-label">Storage Buckets</div>
+      </div>
+      <div class="node warn hotspot hidden-el" id="nodeLambda" style="left:855px; top:68px;" onclick="showInfo('lambda',this)">
+        <div class="node-icon"><span class="seq-optional">opt</span>⚡</div>
+        <div class="node-label">Serverless</div>
+      </div>
+      <div class="node warn hotspot hidden-el" id="nodeApi" style="left:855px; top:165px;" onclick="showInfo('api',this)">
+        <div class="node-icon"><span class="seq-optional">opt</span>🌐</div>
+        <div class="node-label">APIs</div>
+      </div>
+
+      <!-- Public Internet — sits inside cloud zone when expanded -->
+      <div class="node warn hidden-el" id="nodeInternet" style="left:810px; top:265px;" onclick="showInfo('internet',this)">
+        <div class="node-icon">☁️</div>
+        <div class="node-label">Public Internet</div>
+      </div>
+      <!-- ⚠ OUTSIDE NGFW — positioned UNDER the Public Internet icon -->
+      <div class="badge badge-warn hidden-el" id="badgeNoFw" style="left:755px; top:360px;">⚠ OUTSIDE NGFW VISIBILITY</div>
+
+      <!-- ═══ ACT 3 ═══ -->
+      <div class="node danger hotspot hidden-el" id="nodePrivesc" style="left:470px; top:375px;" onclick="showInfo('privesc',this)">
+        <div class="node-icon"><span class="seq-num">6</span>🚨</div>
+        <div class="node-label">Privilege Escalation</div>
+      </div>
+      <div class="node danger hotspot hidden-el" id="nodeLeak" style="left:660px; top:375px;" onclick="showInfo('leak',this)">
+        <div class="node-icon"><span class="seq-num">7</span>💀</div>
+        <div class="node-label">Data Exposure</div>
+      </div>
+      <!-- MISCONFIGURATION → BREACH — centered between Privesc and Leak -->
+      <div class="badge badge-danger hidden-el" id="badgeBreach" style="left:490px; top:445px;">MISCONFIGURATION → BREACH</div>
+
+      <!-- ═══ ACT 4 — CSPM nodes inside the wrapper ═══ -->
+      <div class="node safe hotspot hidden-el" id="nodeCspm" style="left:535px; top:400px;" onclick="showInfo('cspm',this)">
+        <div class="node-icon"><span class="seq-num">8</span>🔭</div>
+        <div class="node-label">CSPM Platform</div>
+      </div>
+      <div class="node safe hotspot hidden-el" id="nodeCompliance" style="left:715px; top:400px;" onclick="showInfo('compliance',this)">
+        <div class="node-icon"><span class="seq-num">9</span>📋</div>
+        <div class="node-label">Compliance Engine</div>
+      </div>
+      <!-- ✓ FULL CLOUD VISIBILITY — centered between CSPM (535) and Compliance (715) -->
+      <div class="badge badge-ok hidden-el" id="badgeCspmOk" style="left:530px; top:468px;">✓ FULL CLOUD VISIBILITY & COMPLIANCE</div>
+
+    </div>
+  </div>
+
+  <div class="narration">
+    <div class="narration-text" id="narrationText"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn" id="btnPrev" onclick="prevAct()" disabled>← Previous</button>
+      <button class="nav-btn primary" id="btnNext" onclick="nextAct()">Next Act →</button>
+    </div>
+  </div>
+</div>
+
+<div class="info-panel" id="infoPanel">
+  <button class="info-panel-close" onclick="closeInfo()">✕</button>
+  <div class="info-panel-scroll"><div id="infoPanelContent"></div></div>
+</div>
+
+<script>
+const ICON_SIZE = 48;
+
+// ═══════════════════════════════════════════
+// VISITED STATE — track which nodes have been clicked
+// ═══════════════════════════════════════════
+const visitedNodes = new Set();
+
+function markVisited(nodeEl) {
+  if (nodeEl && nodeEl.classList.contains('node')) {
+    nodeEl.classList.add('visited');
+    visitedNodes.add(nodeEl.id);
+  }
+}
+
+function resetVisited() {
+  visitedNodes.clear();
+  document.querySelectorAll('.node.visited').forEach(n => n.classList.remove('visited'));
+}
+
+// ═══════════════════════════════════════════
+// CONNECTOR SYSTEM
+// ═══════════════════════════════════════════
+
+function nodeCenter(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const container = document.getElementById('diagramContainer');
+  const cr = container.getBoundingClientRect();
+  const nr = el.querySelector('.node-icon').getBoundingClientRect();
+  return { x: nr.left - cr.left + nr.width / 2, y: nr.top - cr.top + nr.height / 2 };
+}
+
+const connectionDefs = {
+  1: [
+    { from: 'nodeDatacenter', to: 'nodeOnpremFw', style: 'active' },
+    { from: 'nodeOnpremFw',   to: 'nodeCloudFw',  style: 'active' },
+    { from: 'nodeCloudFw',    to: 'nodeVm',       style: 'active' },
+    { from: 'nodeCloudFw',    to: 'nodeDb',       style: 'active' },
+  ],
+  2: [
+    { from: 'nodeBucket',  to: 'nodeInternet', style: 'warn' },
+    { from: 'nodeLambda',  to: 'nodeInternet', style: 'warn' },
+    { from: 'nodeApi',     to: 'nodeInternet', style: 'warn' },
+    { from: 'nodeIam',     to: 'nodeBucket',   style: 'warn-dim' },
+    { from: 'nodeIam',     to: 'nodeLambda',   style: 'warn-dim' },
+    { from: 'nodeIam',     to: 'nodeApi',      style: 'warn-dim' },
+  ],
+  3: [
+    { from: 'nodeBucket', to: 'nodeLeak',   style: 'danger' },
+    { from: 'nodeIam',    to: 'nodePrivesc', style: 'danger' },
+  ],
+  // Act 4: NO connector lines — the CSPM wrapper zone does the visual work
+  4: [],
+};
+
+const lineStyles = {
+  active:     { stroke: '#307FE2', strokeWidth: 2.5, dasharray: '8,5', animate: true },
+  warn:       { stroke: '#FFB900', strokeWidth: 2,   dasharray: '6,4', animate: false },
+  'warn-dim': { stroke: 'rgba(255,185,0,0.3)', strokeWidth: 1.5, dasharray: '3,5', animate: false },
+  danger:     { stroke: '#DA291C', strokeWidth: 2.5, dasharray: '4,3', animate: true },
+};
+
+function drawConnections(actNumber) {
+  const svg = document.getElementById('connSvg');
+  svg.innerHTML = '';
+
+  const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+  style.textContent = `@keyframes dashMove { to { stroke-dashoffset: -24; } } .anim-line { animation: dashMove 1.2s linear infinite; }`;
+  svg.appendChild(style);
+
+  const actsToDraw = [];
+  for (let a = 1; a <= actNumber; a++) {
+    if (actNumber === 4 && a === 3) continue;
+    actsToDraw.push(a);
+  }
+
+  actsToDraw.forEach(a => {
+    const defs = connectionDefs[a];
+    if (!defs) return;
+    defs.forEach(conn => {
+      const p1 = nodeCenter(conn.from);
+      const p2 = nodeCenter(conn.to);
+      if (!p1 || !p2) return;
+      const ls = lineStyles[conn.style];
+      if (!ls) return;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', p1.x); line.setAttribute('y1', p1.y);
+      line.setAttribute('x2', p2.x); line.setAttribute('y2', p2.y);
+      line.setAttribute('stroke', ls.stroke);
+      line.setAttribute('stroke-width', ls.strokeWidth);
+      if (ls.dasharray !== 'none') line.setAttribute('stroke-dasharray', ls.dasharray);
+      line.setAttribute('stroke-linecap', 'round');
+      if (ls.animate) line.classList.add('anim-line');
+      line.style.opacity = '0'; line.style.transition = 'opacity 0.5s ease';
+      svg.appendChild(line);
+      requestAnimationFrame(() => { line.style.opacity = '1'; });
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+
+// Glossary tooltip helper — g('term','definition') → hoverable span
+function g(term, def, cls) {
+  return `<span class="g${cls ? ' '+cls : ''}">${term}<span class="g-tip"><span class="g-term">${term}</span>${def}</span></span>`;
+}
+
+const acts = {
+  1: {
+    label: 'Act 1 of 4', labelClass: '',
+    title: 'The Familiar',
+    subtitle: `Your customer did a ${g('lift and shift','A migration strategy where on-prem applications are moved to the cloud with minimal changes — same architecture, new location.')} to the cloud and secured the network pipe. So far, so good.`,
+    tip: 'This is where most early cloud conversations start. The customer feels safe.',
+    narration: 'Follow the numbers: ① Data Center → ② NGFW → ③ Cloud NGFW → VMs & Database. Click any hotspot to learn more.',
+  },
+  2: {
+    label: 'Act 2 of 4', labelClass: 'act2',
+    title: 'The Blind Spot',
+    subtitle: `The cloud is more than VMs behind a firewall. ${g('Cloud sprawl','The uncontrolled growth of cloud services, accounts, and resources — often provisioned by developers without security team visibility.')} means services and identities live outside the network, connecting directly to the internet.`,
+    tip: `Under the ${g('shared responsibility model','Cloud providers secure the infrastructure; the customer is responsible for how they configure and use it. Misunderstanding this boundary is a top cause of breaches.')}, the customer owns their configurations. Ask: "How many services bypass your firewall?"`,
+    narration: '④ Identities and ⑤ Storage Buckets are the most critical blind spots. Orange lines show direct internet access — bypassing the firewall.',
+  },
+  3: {
+    label: 'Act 3 of 4', labelClass: 'act3',
+    title: 'The Wake-Up Call',
+    subtitle: `What you can\'t see, you can\'t secure. ${g('Compliance drift','When cloud configurations gradually fall out of alignment with security policies and compliance frameworks — often silently, without anyone noticing.')} and misconfigurations are the #1 cause of cloud breaches.`,
+    tip: '"You locked the front door, but the cloud has windows your alarm can\'t see."',
+    narration: `⑥ Privilege Escalation from over-permissioned identities. ⑦ Data Exposure from misconfigured storage. ${g('82% of breaches involve the human element','Verizon Data Breach Investigations Report — misconfigurations, credential misuse, and human error dominate cloud breach root causes.')} — these happen every week.`,
+  },
+  4: {
+    label: 'Act 4 of 4', labelClass: 'act4',
+    title: 'The Path Forward',
+    subtitle: `${g('CSPM','Cloud Security Posture Management — continuous monitoring of cloud configurations, identities, and compliance across all services.')} gives your customer eyes across their entire cloud. It\'s a foundational pillar of ${g('CNAPP','Cloud-Native Application Protection Platform — Gartner\'s converged category combining CSPM, CWPP, CIEM, and more into a unified cloud security platform.')}.`,
+    tip: 'CSPM doesn\'t replace the firewall. It covers everything the firewall was never designed to see.',
+    narration: '⑧ CSPM Platform and ⑨ Compliance Engine wrap around the entire cloud estate — providing continuous oversight of every resource.',
+  },
+};
+
+const infos = {
+  datacenter: {
+    title: '① The On-Prem Data Center', tag: 'familiar', tagLabel: 'The familiar',
+    body: `<p>This is home base. Your customer has spent years building and securing their on-premises environment. They know the topology. They trust the controls.</p><p>When they decided to move to the cloud, they treated it like an extension of this world — and that makes perfect sense. It's what they know.</p>`,
+    callout: `<strong>Seller insight:</strong> Acknowledge their on-prem maturity. It's real. The gap isn't that they're bad at security — it's that the cloud plays by different rules.`,
+  },
+  onpremfw: {
+    title: '② On-Prem NGFW', tag: 'familiar', tagLabel: 'The familiar',
+    body: `<p>The next-gen firewall inspects traffic, blocks threats, and enforces policy. It's the backbone of their network security — and it works extremely well for what it was built to do.</p><p>When the customer extends to the cloud, the NGFW naturally becomes the gatekeeper for that connection.</p>`,
+    callout: `<strong>Seller insight:</strong> The NGFW isn't going away. It's essential for securing the network path. The question is: what happens beyond the network path?`,
+  },
+  cloudfw: {
+    title: '③ Cloud NGFW', tag: 'familiar', tagLabel: 'The familiar',
+    body: `<p>The customer deployed a firewall in the cloud — maybe as a virtual appliance, maybe as a cloud-native service. It inspects traffic between their on-prem environment and cloud workloads.</p><p>This is a smart move. Traffic flowing between their data center and cloud VMs is inspected and policy-enforced. The network pipe is secured.</p>`,
+    callout: `<strong>Seller insight:</strong> When the customer says "we have a firewall in the cloud, we're covered" — they're right about the network. But the cloud is much more than a network.`,
+  },
+  vm: {
+    title: 'Cloud VMs & Workloads', tag: 'familiar', tagLabel: 'The familiar',
+    body: `<p>These are the workloads your customer lifted and shifted — applications and servers moved from on-prem to the cloud. They sit behind the cloud firewall and behave much like their on-prem equivalents.</p><p>For a lift-and-shift customer, this is "the cloud." It's familiar. It works.</p>`,
+    callout: `<strong>Seller insight:</strong> This is the customer's comfort zone. Everything here maps to something they already understand.`,
+  },
+  db: {
+    title: 'Cloud Database', tag: 'familiar', tagLabel: 'The familiar',
+    body: `<p>A managed database service — like RDS, Cloud SQL, or Cosmos DB. Often deployed alongside VMs as part of the initial migration.</p><p>While database traffic may flow through the firewall, the configuration of the database itself (access rules, encryption, public exposure) is managed through the cloud provider's control plane — not the network.</p>`,
+    callout: `<strong>Seller insight:</strong> This is a subtle bridge to Act 2. The database exists on the network, but its security posture is defined by cloud configurations, not firewall rules.`,
+  },
+  internet: {
+    title: 'The Public Internet', tag: 'blind', tagLabel: 'Blind spot',
+    body: `<p>Cloud-native services can reach the public internet directly — through the cloud provider's own networking. This traffic <strong>never passes through your customer's firewall.</strong></p><p>A storage bucket can serve files to the world. A serverless function can call external APIs. An API gateway can accept requests from anywhere. All without a single packet touching the NGFW.</p>`,
+    callout: `<strong>Seller insight:</strong> The internet isn't just something on the other side of the firewall anymore — cloud services have their own direct path to it.`,
+  },
+  iam: {
+    title: '④ Identities & Access (IAM)', tag: 'blind', tagLabel: 'Blind spot',
+    body: `<p>In the cloud, <strong>identity is the new perimeter.</strong> Every user, service account, and role has permissions that determine what they can access and change.</p><p>An over-permissioned identity can access any resource — regardless of whether a firewall sits in front of it. IAM operates on a completely different plane than network security. This is why ${g('CIEM','Cloud Infrastructure Entitlement Management — tools that analyze and right-size cloud permissions, reducing the blast radius of compromised identities.')} is emerging as a critical capability.</p>`,
+    callout: `<strong>Seller insight:</strong> This is often the biggest "aha" moment. Ask: "If one of your developer accounts got compromised, how far could an attacker get?" Most customers can't answer that.`,
+  },
+  bucket: {
+    title: '⑤ Storage Buckets', tag: 'blind', tagLabel: 'Blind spot',
+    body: `<p>Cloud storage (S3, GCS, Azure Blob) are some of the most commonly used — and most commonly misconfigured — cloud resources.</p><p>When a developer creates a storage bucket, data can flow directly in and out over the internet. <strong>It never passes through the firewall.</strong> The NGFW has zero visibility into whether that bucket is public or private.</p>`,
+    callout: `<strong>Seller insight:</strong> A publicly exposed bucket with sensitive data is one of the most common cloud breaches. Ask: "Do you know which of your storage buckets are publicly accessible right now?"`,
+  },
+  lambda: {
+    title: 'Serverless Functions', tag: 'blind', tagLabel: 'Blind spot',
+    body: `<p>Serverless functions (Lambda, Cloud Functions, Azure Functions) run code without any server the customer manages. They spin up, execute, and vanish.</p><p>They have their own IAM roles, their own network access, and they <strong>never traverse the customer's firewall.</strong></p>`,
+    callout: `<strong>Seller insight:</strong> Developers love serverless because it's fast and cheap. But each function is a potential access point with its own permissions.`,
+  },
+  api: {
+    title: 'APIs & Endpoints', tag: 'blind', tagLabel: 'Blind spot',
+    body: `<p>Modern cloud applications expose APIs — for mobile apps, partner integrations, internal microservices. These endpoints are internet-facing by default.</p><p>APIs are configured through the cloud provider's API gateway or load balancer — far outside the NGFW's reach.</p>`,
+    callout: `<strong>Seller insight:</strong> APIs are how the business connects to the world. If an API is misconfigured, it's an open door the firewall doesn't know exists.`,
+  },
+  privesc: {
+    title: '⑥ Privilege Escalation', tag: 'risk', tagLabel: 'Real risk',
+    body: `<p>A service account has more permissions than it needs (this is extremely common). An attacker compromises one workload and uses that account to escalate — accessing databases, secrets, storage, and other services.</p><p>The entire attack happens through the ${g('control plane','The cloud provider\'s management layer — APIs and consoles used to create, configure, and manage resources. Distinct from the data plane where workloads run.')}. No malicious network traffic. No firewall alert. The attacker moves laterally using <strong>legitimate cloud API calls.</strong></p>`,
+    callout: `<strong>Seller insight:</strong> "An attacker didn't break in through the wall. They used a key that had access to every room." This is why identity and configuration monitoring matter.`,
+  },
+  leak: {
+    title: '⑦ Data Exposure', tag: 'risk', tagLabel: 'Real risk',
+    body: `<p>A developer creates a storage bucket for a project. They set it to "public" during testing and forget to change it back. Sensitive customer data sits there, accessible to anyone with the URL.</p><p>The firewall never sees this. There's no alert. No log entry. The data is exposed for weeks or months until a scanner — or an attacker — finds it.</p><p><strong>This is the most common cloud breach pattern in the world.</strong></p>`,
+    callout: `<strong>Seller insight:</strong> This isn't a sophisticated attack. It's ${g('compliance drift','Configurations that were correct at deployment but gradually fell out of policy — a public bucket that was supposed to be temporary, a test rule that was never removed.','g-below g-right')} — a configuration that slipped. The customer's existing tools weren't designed to catch it. That's not a failure — it's a gap.`,
+  },
+  cspm: {
+    title: '⑧ CSPM — Full Cloud Visibility', tag: 'solution', tagLabel: 'The answer',
+    body: `<p><strong>Cloud Security Posture Management</strong> continuously scans the customer's entire cloud environment — not just network traffic, but every resource, every configuration, every identity.</p><p>It answers the questions the firewall can't: Are any storage buckets public? Are there over-permissioned accounts? Are encryption settings correct? Is anything drifting from policy?</p><p>CSPM is a foundational pillar of ${g('CNAPP','Cloud-Native Application Protection Platform — Gartner\'s converged category that unifies CSPM, CWPP, CIEM, and pipeline security into one platform.')}. It doesn't replace the firewall — it covers the 90% of cloud the firewall was never designed to see.</p>`,
+    callout: `<strong>Seller insight:</strong> Position CSPM as the "eyes" for everything beyond the network. It's not about replacing anything — it's about closing the visibility gap before ${g('compliance drift','Silent configuration changes that move the environment out of policy over time.')} becomes a breach.`,
+  },
+  compliance: {
+    title: '⑨ Continuous Compliance', tag: 'solution', tagLabel: 'The answer',
+    body: `<p>Most organizations have compliance requirements — ${g('CIS Benchmarks','Center for Internet Security — consensus-based best-practice security configuration guides for cloud platforms, operating systems, and applications.','g-below g-right')} , SOC 2, PCI-DSS, HIPAA. In the cloud, maintaining compliance means continuously monitoring hundreds of configuration settings across dozens of services.</p><p>CSPM automates this entirely. It maps the customer's cloud resources against compliance frameworks in real time and flags ${g('compliance drift','When configurations gradually fall out of alignment with policy — detected automatically by CSPM rather than discovered during an audit or breach.')} the moment it happens.</p>`,
+    callout: `<strong>Seller insight:</strong> Compliance is a natural door-opener. Ask: "How are you tracking your cloud compliance posture today?" If the answer is "manually" or "we're not sure" — that's your moment.`,
+  },
+};
+
+// ═══════════════════════════════════════════
+let currentAct = 1;
+
+function startJourney() {
+  document.getElementById('introOverlay').classList.add('hidden');
+  setTimeout(() => applyAct(1), 100);
+}
+
+function goToAct(n) {
+  if (n < 1 || n > 4) return;
+  currentAct = n;
+  applyAct(n);
+  closeInfo();
+}
+function nextAct() { goToAct(currentAct + 1); }
+function prevAct() { goToAct(currentAct - 1); }
+
+function applyAct(n) {
+  const a = acts[n];
+  const lbl = document.getElementById('actLabel');
+  lbl.textContent = a.label; lbl.className = 'act-label ' + a.labelClass;
+  document.getElementById('actTitle').textContent = a.title;
+  document.getElementById('actSubtitle').innerHTML = a.subtitle;
+  document.getElementById('sellerTipText').innerHTML = a.tip;
+  document.getElementById('narrationText').innerHTML = a.narration;
+
+  document.querySelectorAll('.timeline-dot').forEach(d => d.classList.toggle('active', parseInt(d.dataset.act) <= n));
+  document.querySelectorAll('.timeline-line').forEach((l, i) => l.classList.toggle('filled', i + 1 < n));
+
+  document.getElementById('btnPrev').disabled = n === 1;
+  const btnNext = document.getElementById('btnNext');
+  btnNext.textContent = n === 4 ? '✓ Journey Complete' : 'Next Act →';
+  btnNext.disabled = n === 4;
+
+  const show = ids => ids.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.remove('hidden-el'); el.classList.add('visible-el'); } });
+  const hide = ids => ids.forEach(id => { const el = document.getElementById(id); if (el) { el.classList.add('hidden-el'); el.classList.remove('visible-el'); } });
+
+  document.querySelectorAll('.dimmed').forEach(el => el.classList.remove('dimmed'));
+
+  const act2els = ['nodeBucket','nodeIam','nodeLambda','nodeApi','nodeInternet','badgeNoFw'];
+  const act3els = ['nodeLeak','nodePrivesc','badgeBreach'];
+  const act4els = ['zoneCspmWrapper','nodeCspm','nodeCompliance','badgeCspmOk'];
+
+  hide([...act2els, ...act3els, ...act4els]);
+
+  // Coverage boundary
+  const cb = document.getElementById('coverageBoundary');
+  const cbl = document.getElementById('coverageBoundaryLabel');
+  cb.style.opacity = n === 1 ? '0.3' : '1';
+  cbl.style.opacity = n === 1 ? '0' : '1';
+
+  // Cloud zone sizing
+  const cz = document.getElementById('zoneCloud');
+  cz.style.height = n >= 2 ? '310px' : '210px';
+
+  if (n >= 2) show(act2els);
+  if (n >= 3) {
+    show(act3els);
+  }
+  if (n >= 4) {
+    show(act4els);
+    hide(act3els);
+    cz.style.height = '310px';
+  }
+
+  requestAnimationFrame(() => { requestAnimationFrame(() => { drawConnections(n); }); });
+}
+
+function showInfo(key, nodeEl) {
+  const info = infos[key]; if (!info) return;
+
+  // Mark this node as visited
+  if (nodeEl) markVisited(nodeEl);
+
+  document.getElementById('infoPanelContent').innerHTML = `
+    <span class="info-tag ${info.tag}">${info.tagLabel}</span>
+    <h3>${info.title}</h3>${info.body}
+    <div class="callout">${info.callout}</div>`;
+  document.getElementById('infoPanel').classList.add('open');
+}
+
+function closeInfo() { document.getElementById('infoPanel').classList.remove('open'); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeInfo();
+  if (document.getElementById('introOverlay').classList.contains('hidden')) {
+    if (e.key === 'ArrowRight') nextAct();
+    if (e.key === 'ArrowLeft') prevAct();
+  }
+});
+
+window.addEventListener('resize', () => {
+  if (document.getElementById('introOverlay').classList.contains('hidden')) drawConnections(currentAct);
+});
+</script>
+</body>
+</html>
