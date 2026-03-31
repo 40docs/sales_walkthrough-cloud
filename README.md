@@ -4,44 +4,28 @@ An interactive, single-file walkthrough that guides sellers through the cloud se
 
 ![Preview](assets/preview.png)
 
-## How to Use
+## Launch It
 
-### 1. Download the file
+**Live version:** [https://40docs.github.io/sales_walkthrough-cloud/](https://40docs.github.io/sales_walkthrough-cloud/)
 
-Click on **`cloud-journey-final.html`** in the file list above, then click the **download icon** (down arrow) in the top-right of the file view.
+Press **F11** (Windows/Linux) or **Ctrl+Cmd+F** (Mac) to go full screen.
+
+## Offline / Download
+
+Click **`cloud-journey-final.html`** above, then click the **download icon** (down arrow):
 
 ![Download Button](assets/download-button.png)
 
-The download icon is the **down arrow** — the fourth icon in the toolbar shown above.
+Double-click the downloaded file to open it in your browser. No server, no install, no internet required.
 
-### 2. Open in your browser
-
-Double-click the downloaded `cloud-journey-final.html` file. It will open in your default browser — no server, no install, no dependencies required.
-
-### 3. Enter full screen
-
-Press **F11** (Windows/Linux) or **Ctrl+Cmd+F** (Mac) to enter full-screen mode for the best experience.
-
-### 4. Navigate the walkthrough
+## Navigating the Walkthrough
 
 - Click **"Begin the Journey"** to start
 - **Click numbered hotspots** on the diagram to open info panels with seller insights
 - Use **"Next Act"** to advance through the four acts
-- Use **arrow keys** (left/right) for quick navigation
-- Press **Escape** to close panels
-
-### 5. After the journey
-
-The **summary card** distills the core sales message. From there, open **The Armory** for your seller's toolkit:
-
-- **Cost of Inaction** — verified stats with source links
-- **Discovery Questions** — organized by persona (CISO, Platform, SOC, GRC)
-- **Objection Playbook** — honest "they say / you say" responses
-- **Next Steps** — Cloud Crisis Room, Proof of Value, Executive Briefing
-
-## Structure
-
-This is a single self-contained HTML file — all CSS, JavaScript, and content are inline. No build step, no dependencies, no network connection required after download.
+- **Arrow keys** (left/right) for quick navigation, **Escape** to close panels
+- After Act 4, the **summary card** distills the core message
+- From the summary, open **The Armory** — your seller's toolkit with discovery questions, objection responses, and next steps
 
 ## The Four Acts
 
