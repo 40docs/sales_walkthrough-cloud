@@ -264,6 +264,59 @@
   .armory-subtitle { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
   .armory-close { position: fixed; top: 20px; right: 24px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: var(--text-secondary); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; z-index: 301; }
   .armory-close:hover { background: rgba(255,255,255,0.12); }
+
+  /* ── LADDER ANALOGY HERO ── */
+  .analogy-hero { margin-bottom: 32px; padding: 40px 32px 36px; border-radius: 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden; }
+  .analogy-scene { display: flex; justify-content: center; margin-bottom: 28px; height: 200px; position: relative; }
+
+  /* Full structure container — house + garage as one unit */
+  .building { position: relative; width: 320px; height: 180px; margin-top: 20px; }
+
+  /* Ground line */
+  .ground { position: absolute; bottom: 0; left: -20px; right: -20px; height: 1px; background: rgba(255,255,255,0.08); }
+
+  /* Main house roof */
+  .house-roof { position: absolute; top: 0; left: 20px; width: 0; height: 0; border-left: 110px solid transparent; border-right: 110px solid transparent; border-bottom: 45px solid rgba(255,255,255,0.08); }
+
+  /* Main house body */
+  .house-body { position: absolute; bottom: 1px; left: 20px; width: 220px; height: 110px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-bottom: none; }
+
+  /* Front door — centered on house body, with deadbolt glow */
+  .front-door { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 32px; height: 54px; background: rgba(60,177,126,0.12); border: 1px solid rgba(60,177,126,0.45); border-bottom: none; border-radius: 2px 2px 0 0; }
+  .deadbolt { position: absolute; top: 24px; right: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-cyan); box-shadow: 0 0 6px rgba(60,177,126,0.5), 0 0 16px rgba(60,177,126,0.25); }
+  .door-label { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); font-size: 7px; font-weight: 700; letter-spacing: 0.8px; color: var(--accent-cyan); white-space: nowrap; text-transform: uppercase; }
+
+  /* Windows on house body */
+  .window { position: absolute; width: 26px; height: 26px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); border-radius: 1px; }
+  .window-left { top: 18px; left: 18px; }
+  .window-right { top: 18px; right: 18px; }
+  .window.vulnerable { border-color: rgba(255,185,0,0.5); background: rgba(255,185,0,0.05); border-style: dashed; }
+  .window.exposed { border-color: rgba(218,41,28,0.5); background: rgba(218,41,28,0.08); box-shadow: 0 0 10px rgba(218,41,28,0.15); }
+
+  .entry-label { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); font-size: 7px; font-weight: 700; letter-spacing: 0.8px; white-space: nowrap; text-transform: uppercase; opacity: 0.8; }
+  .entry-label.warn { color: var(--accent-orange); }
+
+  /* Garage — attached to right side of house, same structural outline as house */
+  .garage { position: absolute; bottom: 1px; right: 0; width: 80px; height: 70px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-left: none; }
+  .garage-door { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 48px; border: 1px dashed rgba(255,185,0,0.35); border-bottom: none; background: rgba(255,185,0,0.05); }
+  .garage-roof { position: absolute; top: -16px; left: -1px; right: -1px; height: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-bottom: none; clip-path: polygon(0 100%, 50% 0, 100% 100%); }
+
+  /* Ladder — leaning against the right wall, top touching the exposed window */
+  .ladder { position: absolute; bottom: 1px; width: 22px; height: 100px; transform: rotate(-14deg); transform-origin: bottom center; }
+  .ladder-rail { position: absolute; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, rgba(218,41,28,0.7), rgba(218,41,28,0.25)); border-radius: 2px; }
+  .ladder-rail-left { left: 0; }
+  .ladder-rail-right { right: 0; }
+  .ladder-rung { position: absolute; left: 0; right: 0; height: 2px; background: rgba(218,41,28,0.4); border-radius: 1px; }
+
+  /* Analogy text */
+  .analogy-text { text-align: center; max-width: 480px; margin: 0 auto; }
+  .analogy-quote { font-size: 18px; font-weight: 600; color: var(--text-primary); line-height: 1.5; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .analogy-quote .highlight-green { color: var(--accent-cyan); }
+  .analogy-quote .highlight-warn { color: var(--accent-orange); }
+  .analogy-quote .highlight-red { color: var(--accent-red); }
+  .analogy-punchline { font-size: 15px; color: var(--text-secondary); line-height: 1.65; }
+  .analogy-punchline em { color: var(--text-primary); font-style: normal; font-weight: 600; }
+
   .armory-stats-hero { background: linear-gradient(165deg, rgba(218,41,28,0.06) 0%, rgba(255,255,255,0.03) 50%, rgba(48,127,226,0.05) 100%); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px 28px; margin-bottom: 28px; position: relative; overflow: hidden; }
   .armory-stats-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent-red), var(--accent-blue), var(--accent-cyan), var(--accent-cyan)); }
   .armory-stat { display: flex; align-items: center; gap: 0; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
@@ -393,8 +446,48 @@
   <div class="armory-container">
     <div class="armory-header">
       <div class="armory-eyebrow">THE ARMORY</div>
-      <div class="armory-title">The cost of doing nothing.</div>
-      <div class="armory-subtitle">The numbers your customer needs to hear — and the tools you need to close.</div>
+      <div class="armory-title">Find the ladders.</div>
+      <div class="armory-subtitle">The analogy that reframes the conversation — backed by the numbers and tools you need to close.</div>
+    </div>
+
+    <div class="analogy-hero">
+      <div class="analogy-scene">
+        <div class="building">
+          <div class="ground"></div>
+          <div class="house-roof"></div>
+          <div class="house-body">
+            <!-- Front door with glowing deadbolt -->
+            <div class="front-door">
+              <div class="deadbolt"></div>
+              <div class="door-label">Secured</div>
+            </div>
+            <!-- Windows — left vulnerable, right exposed with ladder -->
+            <div class="window window-left vulnerable"></div>
+            <div class="window window-right exposed"></div>
+          </div>
+          <!-- Garage — attached to right side -->
+          <div class="garage">
+            <div class="garage-roof"></div>
+            <div class="garage-door"></div>
+            <div class="entry-label warn" style="bottom:-15px;left:50%;position:absolute;transform:translateX(-50%)">Garage</div>
+          </div>
+          <!-- Ladder leaning against right side of house, reaching the exposed window -->
+          <div class="ladder" style="left:218px;bottom:1px">
+            <div class="ladder-rail ladder-rail-left"></div>
+            <div class="ladder-rail ladder-rail-right"></div>
+            <div class="ladder-rung" style="top:12%"></div>
+            <div class="ladder-rung" style="top:27%"></div>
+            <div class="ladder-rung" style="top:42%"></div>
+            <div class="ladder-rung" style="top:57%"></div>
+            <div class="ladder-rung" style="top:72%"></div>
+            <div class="ladder-rung" style="top:87%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="analogy-text">
+        <div class="analogy-quote">You've put a <span class="highlight-green">deadbolt on the front door</span>. But the <span class="highlight-warn">garage, the back door, the windows</span> — they're still open.</div>
+        <div class="analogy-punchline">You don't need deadbolts everywhere. You just need to know <em>which windows have <span class="highlight-red">ladders</span> leaning against them.</em></div>
+      </div>
     </div>
 
     <div class="armory-stats-hero">
