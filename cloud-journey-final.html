@@ -96,15 +96,15 @@
     font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
     padding: 2px 10px; border-radius: 4px; background: var(--bg-dark);
   }
-  .zone-onprem { border: 1px solid rgba(48, 127, 226, 0.20); }
+  .zone-onprem { border: 1px solid rgba(48, 127, 226, 0.35); }
   .zone-onprem .zone-label { color: #307FE2; }
-  .zone-cloud { border: 1px solid rgba(144, 99, 205, 0.20); }
+  .zone-cloud { border: 1px solid rgba(144, 99, 205, 0.35); }
   .zone-cloud .zone-label { color: #9063CD; }
 
   /* CSPM wrapper — wraps AROUND the cloud zone in Act 4 */
   .zone-cspm-wrapper {
-    border: 1px solid rgba(60, 177, 126, 0.20);
-    box-shadow: 0 0 30px rgba(60, 177, 126, 0.05);
+    border: 1px solid rgba(60, 177, 126, 0.35);
+    box-shadow: 0 0 30px rgba(60, 177, 126, 0.08);
   }
   .zone-cspm-wrapper .zone-label {
     color: #3CB17E;
@@ -121,11 +121,11 @@
   .node:hover .node-icon { border-color: rgba(255,255,255,0.22); }
   .node-label { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-align: center; white-space: nowrap; }
 
-  .node.warn .node-icon { border-color: rgba(255, 185, 0, 0.25); }
+  .node.warn .node-icon { border-color: rgba(255, 185, 0, 0.35); }
   .node.warn:hover .node-icon { border-color: rgba(255,255,255,0.22); }
-  .node.danger .node-icon { border-color: rgba(218, 41, 28, 0.25); }
+  .node.danger .node-icon { border-color: rgba(218, 41, 28, 0.35); }
   .node.danger:hover .node-icon { border-color: rgba(255,255,255,0.22); }
-  .node.safe .node-icon { border-color: rgba(60, 177, 126, 0.25); }
+  .node.safe .node-icon { border-color: rgba(60, 177, 126, 0.35); }
 
   /* Sequence number badge */
   .seq-num {
@@ -381,7 +381,7 @@
   .node, .zone, .badge { transition: all 0.6s cubic-bezier(0.4,0,0.2,1); }
   .dimmed { opacity: 0.2 !important; }
 
-  .coverage-boundary { position: absolute; border: 1px solid rgba(60,177,126,0.25); border-radius: 10px; background: rgba(60,177,126,0.03); transition: all 0.45s; pointer-events: none; }
+  .coverage-boundary { position: absolute; border: 1px solid rgba(60,177,126,0.35); border-radius: 10px; background: rgba(60,177,126,0.04); transition: all 0.45s; pointer-events: none; }
   .coverage-boundary-label { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #3CB17E; white-space: nowrap; background: var(--bg-dark); padding: 2px 8px; border-radius: 4px; }
 
   @media (max-width: 768px) {
@@ -405,13 +405,24 @@
   .light-mode .timeline-line { background: rgba(0,0,0,0.1); }
   .light-mode .act-title { background: linear-gradient(135deg, #1d1d1f, #6e6e73); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-  .light-mode .zone { border-color: rgba(0,0,0,0.08); }
+  .light-mode .zone { border-width: 1.5px; }
+  .light-mode .zone-onprem { border-color: rgba(48, 127, 226, 0.35); }
+  .light-mode .zone-cloud { border-color: rgba(144, 99, 205, 0.35); }
+  .light-mode .zone-cspm-wrapper { border-color: rgba(60, 177, 126, 0.35); }
   .light-mode .zone-label { background: var(--bg-dark); }
-  .light-mode .node-icon { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.1); }
-  .light-mode .node:hover .node-icon { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.18); }
+  .light-mode .node-icon { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.14); }
+  .light-mode .node:hover .node-icon { background: rgba(0,0,0,0.07); border-color: rgba(0,0,0,0.22); }
+  .light-mode .node.warn .node-icon { border-color: rgba(255,185,0,0.4); }
+  .light-mode .node.danger .node-icon { border-color: rgba(218,41,28,0.4); }
+  .light-mode .node.safe .node-icon { border-color: rgba(60,177,126,0.4); }
   .light-mode .node.warn:hover .node-icon,
-  .light-mode .node.danger:hover .node-icon { border-color: rgba(0,0,0,0.18); }
+  .light-mode .node.danger:hover .node-icon { border-color: rgba(0,0,0,0.22); }
   .light-mode .node.visited .seq-num { color: rgba(0,0,0,0.4); }
+  .light-mode .coverage-boundary { border-color: rgba(60,177,126,0.35); background: rgba(60,177,126,0.05); }
+  .light-mode .badge-ok { border-color: rgba(60,177,126,0.35); }
+  .light-mode .badge-warn { border-color: rgba(255,185,0,0.5); }
+  .light-mode .badge-danger { border-color: rgba(218,41,28,0.35); }
+  .light-mode .node-label { color: #3a3a3c; }
 
   .light-mode .info-panel { background: rgba(255,255,255,0.97); border-left-color: rgba(0,0,0,0.08); scrollbar-color: rgba(0,0,0,0.1) transparent; }
   .light-mode .info-panel::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
@@ -715,7 +726,7 @@
 
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:14px">
-    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">💡</div>
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" id="themeToggle">☀️</div>
     <div>
       <div class="topbar-title">The Cloud Security Journey</div>
       <div class="topbar-subtitle">Seller enablement — understanding the customer's path to cloud maturity</div>
@@ -877,7 +888,8 @@
 
 <script>
 function toggleTheme() {
-  document.documentElement.classList.toggle('light-mode');
+  const isLight = document.documentElement.classList.toggle('light-mode');
+  document.getElementById('themeToggle').textContent = isLight ? '🌙' : '☀️';
 }
 
 const ICON_SIZE = 48;
