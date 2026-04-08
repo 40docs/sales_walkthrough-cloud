@@ -391,9 +391,8 @@
   }
 
   /* ── THEME TOGGLE ── */
-  .theme-toggle { width: 36px; height: 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); cursor: pointer; position: relative; transition: all 0.3s; flex-shrink: 0; margin-left: 16px; }
-  .theme-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--text-secondary); transition: all 0.3s; }
-  .theme-toggle:hover { border-color: rgba(255,255,255,0.3); }
+  .theme-toggle { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.3s; flex-shrink: 0; line-height: 1; }
+  .theme-toggle:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); }
 
   /* ── LIGHT MODE ── */
   .light-mode { --bg-dark: #ffffff; --text-primary: #1d1d1f; --text-secondary: #6e6e73; --text-dim: #aeaeb2; --accent-grey: #aeaeb2; }
@@ -472,11 +471,21 @@
   .light-mode .g .g-tip::after { border-top-color: rgba(0,0,0,0.1); }
   .light-mode .g.g-below .g-tip::after { border-bottom-color: rgba(0,0,0,0.1); }
 
-  .light-mode .theme-toggle { border-color: rgba(0,0,0,0.15); background: rgba(0,0,0,0.06); }
-  .light-mode .theme-toggle::after { left: 18px; background: #1d1d1f; }
-  .light-mode .theme-toggle:hover { border-color: rgba(0,0,0,0.25); }
+  .light-mode .theme-toggle { border-color: rgba(0,0,0,0.12); background: rgba(0,0,0,0.04); }
+  .light-mode .theme-toggle:hover { border-color: rgba(0,0,0,0.25); background: rgba(0,0,0,0.08); }
 
   .light-mode .narration-text { color: #6e6e73; }
+
+  /* Armory text darker in light mode */
+  .light-mode .armory-subtitle { color: #48484a; }
+  .light-mode .armory-stat-text { color: #3a3a3c; }
+  .light-mode .armory-question { color: #3a3a3c; }
+  .light-mode .armory-you-say { color: #3a3a3c; }
+  .light-mode .armory-they-say { color: #b8860b; }
+  .light-mode .armory-card-subtitle { color: #6e6e73; }
+  .light-mode .analogy-punchline { color: #48484a; }
+  .light-mode .info-panel p { color: #3a3a3c; }
+  .light-mode .armory-next-text { color: #3a3a3c; }
 </style>
 </head>
 <body>
@@ -705,9 +714,12 @@
 </div>
 
 <div class="topbar">
-  <div>
-    <div class="topbar-title">The Cloud Security Journey</div>
-    <div class="topbar-subtitle">Seller enablement — understanding the customer's path to cloud maturity</div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">💡</div>
+    <div>
+      <div class="topbar-title">The Cloud Security Journey</div>
+      <div class="topbar-subtitle">Seller enablement — understanding the customer's path to cloud maturity</div>
+    </div>
   </div>
   <div class="timeline">
     <div class="timeline-dot active" data-act="1" onclick="goToAct(1)">1</div>
@@ -717,7 +729,6 @@
     <div class="timeline-dot act3" data-act="3" onclick="goToAct(3)">3</div>
     <div class="timeline-line" id="tl3"></div>
     <div class="timeline-dot act4" data-act="4" onclick="goToAct(4)">4</div>
-    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode"></div>
   </div>
 </div>
 
