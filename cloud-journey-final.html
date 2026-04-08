@@ -502,6 +502,7 @@
 <body>
 
 <div class="intro-overlay" id="introOverlay">
+  <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" style="position:absolute;top:20px;right:24px;z-index:201" id="introThemeToggle">☀️</div>
   <div class="intro-glow"></div>
   <div class="intro-card">
     <div class="intro-icon">🛡️</div>
@@ -889,7 +890,8 @@
 <script>
 function toggleTheme() {
   const isLight = document.documentElement.classList.toggle('light-mode');
-  document.getElementById('themeToggle').textContent = isLight ? '🌙' : '☀️';
+  const icon = isLight ? '🌙' : '☀️';
+  document.querySelectorAll('.theme-toggle').forEach(el => el.textContent = icon);
 }
 
 const ICON_SIZE = 48;
