@@ -68,26 +68,26 @@
 
   .main { padding-top: 54px; height: 100vh; display: flex; flex-direction: column; overflow-y: auto; }
 
-  .act-header { text-align: center; padding: 20px 32px 6px; flex-shrink: 0; }
-  .act-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; color: var(--accent-blue); }
+  .act-header { text-align: center; padding: clamp(8px, 1.5vh, 20px) 32px clamp(2px, 0.5vh, 6px); flex-shrink: 0; }
+  .act-label { font-size: clamp(9px, 1.2vw, 11px); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: clamp(4px, 0.8vh, 8px); color: var(--accent-blue); }
   .act-label.act2 { color: var(--accent-orange); }
   .act-label.act3 { color: var(--accent-red); }
   .act-label.act4 { color: var(--accent-cyan); }
   .act-title {
-    font-size: clamp(26px, 4vw, 40px); font-weight: 800; line-height: 1.15; margin-bottom: 10px;
+    font-size: clamp(20px, 3.5vw, 40px); font-weight: 800; line-height: 1.15; margin-bottom: clamp(4px, 0.8vh, 10px);
     background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .act-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 660px; margin: 0 auto; line-height: 1.6; }
+  .act-subtitle { font-size: clamp(11px, 1.4vw, 14px); color: var(--text-secondary); max-width: 660px; margin: 0 auto; line-height: 1.5; }
   .seller-tip {
-    display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 10px 16px;
+    display: flex; align-items: flex-start; gap: 10px; margin-top: clamp(6px, 1vh, 14px); padding: clamp(6px, 1vh, 10px) 16px;
     max-width: 700px; margin-left: auto; margin-right: auto;
     background: rgba(144,99,205,0.07); border: 1px solid rgba(144,99,205,0.15);
-    border-radius: 8px; font-size: 12px; line-height: 1.6; color: var(--accent-purple); text-align: left;
+    border-radius: 8px; font-size: clamp(10px, 1.2vw, 12px); line-height: 1.5; color: var(--accent-purple); text-align: left;
   }
 
   .diagram-area { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 10px 32px 6px; position: relative; }
-  .diagram-container { position: relative; width: 100%; max-width: 960px; height: 100%; max-height: 520px; min-height: 300px; }
+  .diagram-container { position: relative; width: 960px; height: 520px; transform-origin: top center; }
 
   /* Zones */
   .zone { position: absolute; border-radius: 14px; transition: all 0.45s; }
@@ -203,8 +203,8 @@
   .badge-warn { background: rgba(255,185,0,0.08); color: var(--accent-orange); border: 1px dashed rgba(255,185,0,0.4); }
   .badge-danger { background: rgba(218,41,28,0.06); color: var(--accent-red); border: 1px solid rgba(218,41,28,0.25); }
 
-  .narration { padding: 8px 32px 18px; text-align: center; flex-shrink: 0; }
-  .narration-text { font-size: 13px; color: var(--text-dim); line-height: 1.6; max-width: 680px; margin: 0 auto 12px; font-style: italic; }
+  .narration { padding: clamp(4px, 0.8vh, 8px) 32px clamp(8px, 1.5vh, 18px); text-align: center; flex-shrink: 0; }
+  .narration-text { font-size: clamp(11px, 1.3vw, 13px); color: var(--text-dim); line-height: 1.5; max-width: 680px; margin: 0 auto clamp(6px, 1vh, 12px); font-style: italic; }
   .nav-buttons { display: flex; align-items: center; justify-content: center; gap: 12px; }
   .nav-btn { padding: 10px 22px; border-radius: 20px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s; border: none; }
   .nav-btn:not(.primary) { background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1); }
@@ -279,7 +279,7 @@
   .house-roof { position: absolute; top: 0; left: 20px; width: 0; height: 0; border-left: 110px solid transparent; border-right: 110px solid transparent; border-bottom: 45px solid rgba(255,255,255,0.08); }
 
   /* Main house body */
-  .house-body { position: absolute; bottom: 1px; left: 20px; width: 220px; height: 110px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-bottom: none; }
+  .house-body { position: absolute; top: 44px; left: 20px; width: 220px; bottom: 1px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-bottom: none; }
 
   /* Front door — centered on house body, with deadbolt glow */
   .front-door { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 32px; height: 54px; background: rgba(60,177,126,0.12); border: 1px solid rgba(60,177,126,0.45); border-bottom: none; border-radius: 2px 2px 0 0; }
@@ -384,10 +384,25 @@
   .coverage-boundary { position: absolute; border: 1px solid rgba(60,177,126,0.35); border-radius: 10px; background: rgba(60,177,126,0.04); transition: all 0.45s; pointer-events: none; }
   .coverage-boundary-label { position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #3CB17E; white-space: nowrap; background: var(--bg-dark); padding: 2px 8px; border-radius: 4px; }
 
+  /* ── RESPONSIVE ── */
+  .diagram-container { transform-origin: top center; }
+  @media (max-width: 1024px) {
+    .info-panel { width: 340px; }
+    .topbar-subtitle { display: none; }
+  }
   @media (max-width: 768px) {
-    .diagram-container { transform: scale(0.65); transform-origin: top center; }
-    .info-panel { width: 100%; right: -100%; }
+    .info-panel { width: 100%; }
     .topbar { padding: 10px 16px; }
+    .topbar-title { font-size: 10px; letter-spacing: 1px; }
+    .nav-btn { padding: 8px 18px; font-size: 12px; }
+  }
+  @media (max-height: 700px) {
+    .seller-tip { display: none; }
+    .act-subtitle { margin-bottom: 4px; }
+  }
+  @media (max-height: 550px) {
+    .act-subtitle { display: none; }
+    .narration { padding: 2px 32px 8px; }
   }
 
   /* ── THEME TOGGLE ── */
@@ -923,7 +938,8 @@ function nodeCenter(id) {
   const container = document.getElementById('diagramContainer');
   const cr = container.getBoundingClientRect();
   const nr = el.querySelector('.node-icon').getBoundingClientRect();
-  return { x: nr.left - cr.left + nr.width / 2, y: nr.top - cr.top + nr.height / 2 };
+  const s = diagramScale || 1;
+  return { x: (nr.left - cr.left + nr.width / 2) / s, y: (nr.top - cr.top + nr.height / 2) / s };
 }
 
 const connectionDefs = {
@@ -1236,9 +1252,29 @@ document.addEventListener('keydown', e => {
   }
 });
 
+let diagramScale = 1;
+function scaleDiagram() {
+  const dc = document.getElementById('diagramContainer');
+  if (!dc) return;
+  const area = dc.parentElement;
+  const availW = area.clientWidth - 64;
+  const availH = area.clientHeight - 12;
+  const natW = 960;
+  const natH = 520;
+  const scaleW = Math.min(availW / natW, 1);
+  const scaleH = Math.min(availH / natH, 1);
+  diagramScale = Math.min(scaleW, scaleH);
+  dc.style.transform = `scale(${diagramScale})`;
+  dc.style.width = natW + 'px';
+  dc.style.height = natH + 'px';
+  dc.style.marginBottom = -(natH * (1 - diagramScale)) + 'px';
+}
+
 window.addEventListener('resize', () => {
+  scaleDiagram();
   if (document.getElementById('introOverlay').classList.contains('hidden')) drawConnections(currentAct);
 });
+scaleDiagram();
 </script>
 </body>
 </html>
